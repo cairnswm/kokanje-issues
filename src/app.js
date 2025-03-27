@@ -6,6 +6,9 @@ import Home from './pages/home';
 import List from './pages/list';
 import Edit from './pages/edit';
 import CreateIssue from './pages/createissue';
+import { accessElf } from './functions/accessElf';
+
+accessElf.setApiKey(process.env.REACT_APP_ACCESSELF_API_KEY);
 
 const Layout = ({ children }) => (
   <>

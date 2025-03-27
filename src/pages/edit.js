@@ -2,11 +2,14 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IssueContext } from '../contexts/issuecontext';
+import { accessElf } from '../functions/accessElf';
 
 const Edit = () => {
   const { fetchIssue, updateIssue, loading, error } = useContext(IssueContext);
   const navigate = useNavigate();
   const { id } = useParams();
+
+  accessElf.track("create issue");
   
   const [formData, setFormData] = useState({
     id: '',

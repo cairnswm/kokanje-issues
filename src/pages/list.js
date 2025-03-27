@@ -13,6 +13,7 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { IssueContext } from "../contexts/issuecontext";
+import { accessElf } from "../functions/accessElf";
 
 const List = () => {
   const { 
@@ -29,6 +30,8 @@ const List = () => {
     fetchIssues 
   } = useContext(IssueContext);
   const navigate = useNavigate();
+
+  accessElf.track("List");
 
   // Get unique units for filter dropdown
   const uniqueUnits = [...new Set(allIssues.map((issue) => issue.unit))];
