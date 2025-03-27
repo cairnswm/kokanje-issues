@@ -17,6 +17,8 @@ jobs:
         
       - name: Build Site
         run: npm run build
+        env:
+          REACT_APP_ACCESSELF_API_KEY: ${{ secrets.REACT_APP_ACCESSELF_API_KEY }}
 
       - name: Deploy Site (dist/)
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
