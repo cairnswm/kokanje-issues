@@ -12,7 +12,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    clean: true
+    clean: true,
+    publicPath: isProduction ? '/kokanje/' : '/'
   },
   module: {
     rules: [
@@ -68,11 +69,5 @@ module.exports = {
     hot: true,
     open: true,
     historyApiFallback: true
-  },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-    clean: true,
-    publicPath: isProduction ? '/kokanje/' : '/'
   }
 };
