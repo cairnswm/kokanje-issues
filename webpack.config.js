@@ -3,7 +3,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 
+// Determine if we're in production mode
+const isProduction = process.env.NODE_ENV === 'production';
+
 module.exports = {
+  mode: isProduction ? 'production' : 'development',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -47,6 +51,7 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({
+        NODE_ENV: process.env.NODE_ENV || 'development',
         REACT_APP_API_BASE_URL: process.env.REACT_APP_API_BASE_URL || 'http://localhost',
         REACT_APP_ACCESSELF_API_KEY: process.env.REACT_APP_ACCESSELF_API_KEY
       })
@@ -68,6 +73,6 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     clean: true,
-    publicPath: './'
+    publicPath: isProduction ? '/kokanje/' : '/'
   }
 };

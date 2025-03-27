@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { IssueProvider } from './contexts/issuecontext';
 import Navigation from './components/navigation';
@@ -18,9 +18,14 @@ const Layout = ({ children }) => (
 );
 
 const App = () => {
+  // Determine the basename based on environment
+  const basename = useMemo(() => {
+    return process.env.NODE_ENV === 'production' ? '/kokanje' : '/';
+  }, []);
+
   return (
     <IssueProvider>
-      <Router>
+      <Router basename={basename}>
         <Routes>
           <Route path="/" element={<CreateIssue />} />
           <Route path="/home" element={<Layout><Home /></Layout>} />
