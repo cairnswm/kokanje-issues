@@ -8,6 +8,7 @@ import Edit from './pages/edit';
 import CreateIssue from './pages/createissue';
 import { accessElf } from './functions/accessElf';
 
+console.log("REACT_APP_ACCESSELF_API_KEY", process.env.REACT_APP_ACCESSELF_API_KEY);
 accessElf.setApiKey(process.env.REACT_APP_ACCESSELF_API_KEY);
 
 const Layout = ({ children }) => (
