@@ -13,7 +13,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     clean: true,
-    publicPath: isProduction ? '/kokanje/' : '/'
+    publicPath: './'
   },
   module: {
     rules: [
@@ -36,7 +36,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      filename: 'index.html'
+      filename: 'index.html',
+      publicPath: './'
     }),
     new CopyWebpackPlugin({
       patterns: [
