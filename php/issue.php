@@ -28,36 +28,32 @@ class Issue {
      * @return array Array of issues
      */
     public function getIssues($page = 1, $items_per_page = 100) {
-        // Calculate offset
         $offset = ($page - 1) * $items_per_page;
-        
-        // Query with pagination
         $query = "SELECT id, unit, issue, issue_number, created_at, modified_at, status 
                  FROM " . $this->table_name . " 
                  ORDER BY modified_at DESC 
                  LIMIT ?, ?";
-        
-        // Prepare statement
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("ii", $offset, $items_per_page);
-        
-        // Execute query
         $stmt->execute();
-        $result = $stmt->get_result();
-        
-        // Get total count for pagination info
+        $stmt->store_result();
+        $stmt->bind_result($id, $unit, $issue, $issue_number, $created_at, $modified_at, $status);
+        $issues = [];
+        while ($stmt->fetch()) {
+            $issues[] = [
+                'id' => $id,
+                'unit' => $unit,
+                'issue' => $issue,
+                'issue_number' => $issue_number,
+                'created_at' => $created_at,
+                'modified_at' => $modified_at,
+                'status' => $status
+            ];
+        }
         $count_query = "SELECT COUNT(*) as total FROM " . $this->table_name;
         $count_result = $this->conn->query($count_query);
         $total_rows = $count_result->fetch_assoc()['total'];
         $total_pages = ceil($total_rows / $items_per_page);
-        
-        // Fetch results
-        $issues = [];
-        while ($row = $result->fetch_assoc()) {
-            $issues[] = $row;
-        }
-        
-        // Return issues with pagination info
         return [
             "issues" => $issues,
             "pagination" => [
@@ -78,19 +74,21 @@ class Issue {
         $query = "SELECT id, unit, issue, issue_number, modified_at, status 
                  FROM " . $this->table_name . " 
                  WHERE id = ?";
-        
-        // Prepare statement
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $id);
-        
-        // Execute query
         $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            return $result->fetch_assoc();
+        $stmt->store_result();
+        $stmt->bind_result($id, $unit, $issue, $issue_number, $modified_at, $status);
+        if ($stmt->fetch()) {
+            return [
+                'id' => $id,
+                'unit' => $unit,
+                'issue' => $issue,
+                'issue_number' => $issue_number,
+                'modified_at' => $modified_at,
+                'status' => $status
+            ];
         }
-        
         return null;
     }
     
