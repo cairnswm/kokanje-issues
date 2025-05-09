@@ -9,6 +9,7 @@ class Issue {
     public $id;
     public $unit;
     public $issue;
+    public $issue_number;
     public $modified_at;
     public $status;
     
@@ -31,7 +32,7 @@ class Issue {
         $offset = ($page - 1) * $items_per_page;
         
         // Query with pagination
-        $query = "SELECT id, unit, issue, created_at, modified_at, status 
+        $query = "SELECT id, unit, issue, issue_number, created_at, modified_at, status 
                  FROM " . $this->table_name . " 
                  ORDER BY modified_at DESC 
                  LIMIT ?, ?";
@@ -74,7 +75,7 @@ class Issue {
      * @return array|null Issue data or null if not found
      */
     public function getIssue($id) {
-        $query = "SELECT id, unit, issue, modified_at, status 
+        $query = "SELECT id, unit, issue, issue_number, modified_at, status 
                  FROM " . $this->table_name . " 
                  WHERE id = ?";
         
@@ -99,8 +100,8 @@ class Issue {
      */
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                (unit, issue, status) 
-                VALUES (?, ?, ?)";
+                (unit, issue, issue_number, status) 
+                VALUES (?, ?, ?, ?)";
         
         // Prepare statement
         $stmt = $this->conn->prepare($query);
@@ -108,10 +109,11 @@ class Issue {
         // Sanitize inputs
         $this->unit = htmlspecialchars(strip_tags($this->unit));
         $this->issue = htmlspecialchars(strip_tags($this->issue));
+        $this->issue_number = htmlspecialchars(strip_tags($this->issue_number));
         $this->status = htmlspecialchars(strip_tags($this->status));
         
         // Bind parameters
-        $stmt->bind_param("sss", $this->unit, $this->issue, $this->status);
+        $stmt->bind_param("ssss", $this->unit, $this->issue, $this->issue_number, $this->status);
         
         // Execute query
         if ($stmt->execute()) {
@@ -128,7 +130,7 @@ class Issue {
      */
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
-                SET unit = ?, issue = ?, status = ?, modified_at = CURRENT_TIMESTAMP 
+                SET unit = ?, issue = ?, issue_number = ?, status = ?, modified_at = CURRENT_TIMESTAMP 
                 WHERE id = ?";
         
         // Prepare statement
@@ -137,11 +139,12 @@ class Issue {
         // Sanitize inputs
         $this->unit = htmlspecialchars(strip_tags($this->unit));
         $this->issue = htmlspecialchars(strip_tags($this->issue));
+        $this->issue_number = htmlspecialchars(strip_tags($this->issue_number));
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->id = htmlspecialchars(strip_tags($this->id));
         
         // Bind parameters
-        $stmt->bind_param("sssi", $this->unit, $this->issue, $this->status, $this->id);
+        $stmt->bind_param("ssssi", $this->unit, $this->issue, $this->issue_number, $this->status, $this->id);
         
         // Execute query
         if ($stmt->execute()) {

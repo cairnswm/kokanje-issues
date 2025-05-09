@@ -7,9 +7,10 @@ import List from './pages/list';
 import Edit from './pages/edit';
 import CreateIssue from './pages/createissue';
 import { accessElf } from './functions/accessElf';
+import { REACT_APP_ACCESSELF_API } from './env.js';
 
-console.log("REACT_APP_ACCESSELF_API_KEY", process.env.REACT_APP_ACCESSELF_API_KEY);
-accessElf.setApiKey(process.env.REACT_APP_ACCESSELF_API_KEY);
+console.log(REACT_APP_ACCESSELF_API);
+accessElf.setApiKey(REACT_APP_ACCESSELF_API);
 
 const Layout = ({ children }) => (
   <>

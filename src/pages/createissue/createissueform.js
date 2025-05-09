@@ -1,15 +1,25 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { IssueContext } from '../../contexts/issuecontext';
+import { useLocation } from 'react-router-dom';
 
 const CreateIssueForm = ({ onCreateSuccess }) => {
   const { createIssue, loading, error } = useContext(IssueContext);
-  
+  const location = useLocation();
+
   const [formData, setFormData] = useState({
     unit: '',
     issue: ''
   });
-  
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const unitParam = params.get('unit');
+    if (unitParam) {
+      setFormData(prev => ({ ...prev, unit: unitParam }));
+    }
+  }, [location.search]);
+
   const [formError, setFormError] = useState('');
   
   const handleChange = (e) => {

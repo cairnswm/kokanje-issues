@@ -15,7 +15,8 @@ const Edit = () => {
     id: '',
     unit: '',
     issue: '',
-    status: ''
+    status: '',
+    issue_number: ''
   });
   
   const [formError, setFormError] = useState('');
@@ -35,7 +36,8 @@ const Edit = () => {
           id: issue.id,
           unit: issue.unit,
           issue: issue.issue,
-          status: issue.status
+          status: issue.status,
+          issue_number: issue.issue_number || ''
         });
       } else {
         setFormError('Issue not found');
@@ -151,6 +153,18 @@ const Edit = () => {
                       <option key={status} value={status}>{status}</option>
                     ))}
                   </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Issue Number (optional)</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="issue_number"
+                    value={formData.issue_number}
+                    onChange={handleChange}
+                    placeholder="Enter issue number"
+                    disabled={loading}
+                  />
                 </Form.Group>
                 
                 <div className="d-grid gap-2">

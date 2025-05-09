@@ -21,8 +21,9 @@ $db = $database->getConnection();
 // Create issue object
 $issue = new Issue($db);
 
-// Get HTTP method
+// Get HTTP method and path
 $method = $_SERVER['REQUEST_METHOD'];
+$path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : (isset($_SERVER['ORIG_PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : '');
 
 // Process based on HTTP method
 switch ($method) {
@@ -33,7 +34,12 @@ switch ($method) {
         handlePostRequest($issue);
         break;
     case 'PUT':
-        handlePutRequest($issue);
+        // Extract ID from /{id} in path
+        $id = null;
+        if (preg_match('#^/([0-9]+)$#', $path, $matches)) {
+            $id = intval($matches[1]);
+        }
+        handlePutRequest($issue, $id);
         break;
     case 'OPTIONS':
         // Handle preflight requests
@@ -52,12 +58,15 @@ switch ($method) {
  * @param Issue $issue Issue object
  */
 function handleGetRequest($issue) {
-    // Check if ID is provided
+    $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : (isset($_SERVER['ORIG_PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : '');
+    $id = null;
     if (isset($_GET['id'])) {
-        // Get single issue
         $id = intval($_GET['id']);
+    } elseif (preg_match('#^/([0-9]+)$#', $path, $matches)) {
+        $id = intval($matches[1]);
+    }
+    if ($id !== null) {
         $result = $issue->getIssue($id);
-        
         if ($result) {
             http_response_code(200);
             echo json_encode($result);
@@ -92,11 +101,13 @@ function handlePostRequest($issue) {
     // Check if data is complete
     if (
         !empty($data->unit) &&
-        !empty($data->issue)
+        !empty($data->issue) &&
+        !empty($data->issue_number)
     ) {
         // Set issue properties
         $issue->unit = $data->unit;
         $issue->issue = $data->issue;
+        $issue->issue_number = $data->issue_number;
         $issue->status = !empty($data->status) ? $data->status : "created";
         
         // Create the issue
@@ -104,7 +115,8 @@ function handlePostRequest($issue) {
             http_response_code(201);
             echo json_encode([
                 "message" => "Issue created successfully",
-                "id" => $issue->id
+                "id" => $issue->id,
+                "issue_number" => $issue->issue_number
             ]);
         } else {
             http_response_code(503);
@@ -119,30 +131,36 @@ function handlePostRequest($issue) {
 /**
  * Handle PUT requests
  * @param Issue $issue Issue object
+ * @param int|null $id Issue ID from path
  */
-function handlePutRequest($issue) {
+function handlePutRequest($issue, $id = null) {
     // Get posted data
     $data = json_decode(file_get_contents("php://input"));
     
     // Check if ID is provided
-    if (!empty($data->id)) {
-        // Set issue properties
+    if ($id !== null) {
+        $issue->id = $id;
+    } else if (!empty($data->id)) {
         $issue->id = $data->id;
-        $issue->unit = $data->unit ?? "";
-        $issue->issue = $data->issue ?? "";
-        $issue->status = $data->status ?? "";
-        
-        // Update the issue
-        if ($issue->update()) {
-            http_response_code(200);
-            echo json_encode(["message" => "Issue updated successfully"]);
-        } else {
-            http_response_code(503);
-            echo json_encode(["message" => "Unable to update issue"]);
-        }
     } else {
         http_response_code(400);
         echo json_encode(["message" => "Unable to update issue. No ID provided"]);
+        return;
+    }
+    
+    // Set issue properties
+    $issue->unit = $data->unit ?? "";
+    $issue->issue = $data->issue ?? "";
+    $issue->issue_number = $data->issue_number ?? "";
+    $issue->status = $data->status ?? "";
+    
+    // Update the issue
+    if ($issue->update()) {
+        http_response_code(200);
+        echo json_encode(["message" => "Issue updated successfully"]);
+    } else {
+        http_response_code(503);
+        echo json_encode(["message" => "Unable to update issue"]);
     }
 }
 ?>

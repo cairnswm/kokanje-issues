@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { REACT_APP_KOKANJE_API } from '../env';
 
 // API base URL from environment variable or default to localhost
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost';
+const API_BASE_URL = REACT_APP_KOKANJE_API;
 
 // Create the Issue Context
 export const IssueContext = createContext();
@@ -146,7 +147,7 @@ export const IssueProvider = ({ children }) => {
       queryParams.append('page', page);
       queryParams.append('items_per_page', itemsPerPage);
       
-      const response = await fetch(`${API_BASE_URL}/kokanje/php/api.php?${queryParams}`);
+      const response = await fetch(`${API_BASE_URL}/api.php?${queryParams}`);
       
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -173,7 +174,7 @@ export const IssueProvider = ({ children }) => {
     setError(null);
     
     try {
-      const response = await fetch(`${API_BASE_URL}/kokanje/php/api.php?id=${id}`);
+      const response = await fetch(`${API_BASE_URL}/api.php?id=${id}`);
       
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -196,7 +197,7 @@ export const IssueProvider = ({ children }) => {
     setError(null);
     
     try {
-      const response = await fetch(`${API_BASE_URL}/kokanje/php/api.php`, {
+      const response = await fetch(`${API_BASE_URL}/api.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -227,9 +228,10 @@ export const IssueProvider = ({ children }) => {
   const updateIssue = useCallback(async (issueData) => {
     setLoading(true);
     setError(null);
+    const { id } = issueData;
     
     try {
-      const response = await fetch(`${API_BASE_URL}/kokanje/php/api.php`, {
+      const response = await fetch(`${API_BASE_URL}/api.php/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

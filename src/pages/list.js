@@ -67,6 +67,40 @@ const List = () => {
     navigate(`/edit/${id}`);
   };
 
+  const handleExportCsv = () => {
+    if (!issues.length) return;
+    const headers = [
+      'ID',
+      'Issue #',
+      'Unit',
+      'Issue',
+      'Status',
+      'Created',
+      'Last Modified'
+    ];
+    const rows = issues.map(issue => [
+      issue.id,
+      issue.issue_number,
+      issue.unit,
+      issue.issue.replace(/\n/g, ' ').replace(/\r/g, ''),
+      issue.status,
+      new Date(issue.created_at).toLocaleString(),
+      new Date(issue.modified_at).toLocaleString()
+    ]);
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+      .join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'issues.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Generate pagination items
   const paginationItems = [];
   for (let i = 1; i <= pagination.totalPages; i++) {
@@ -91,9 +125,10 @@ const List = () => {
             </Card.Header>
             <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
               <h2>Issues List</h2>
-              <Button variant="light" onClick={() => navigate("/")}>
-                Create New Issue
-              </Button>
+              <div className="d-flex gap-2">
+                <Button variant="light" onClick={() => navigate("/")}>Create New Issue</Button>
+                <Button variant="outline-light" onClick={handleExportCsv}>Export</Button>
+              </div>
             </Card.Header>
             <Card.Body>
               {/* Filters */}
@@ -174,6 +209,15 @@ const List = () => {
                               <span>{sorting.direction === 'asc' ? '▲' : '▼'}</span>
                             )}
                           </th>
+                          <th
+                            onClick={() => updateSorting('issue_number')}
+                            className="cursor-pointer"
+                            style={{ cursor: 'pointer' }}
+                          >
+                            Issue # {sorting.field === 'issue_number' && (
+                              <span>{sorting.direction === 'asc' ? '▲' : '▼'}</span>
+                            )}
+                          </th>
                           <th 
                             onClick={() => updateSorting('unit')}
                             className="cursor-pointer"
@@ -226,6 +270,7 @@ const List = () => {
                         {issues.map((issue) => (
                           <tr key={issue.id}>
                             <td>{issue.id}</td>
+                            <td>{issue.issue_number}</td>
                             <td>{issue.unit}</td>
                             <td>
                               {issue.issue.length > 100

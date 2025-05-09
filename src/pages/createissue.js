@@ -5,9 +5,10 @@ import CreateIssueForm from './createissue/createissueform';
 import LookupForm from './createissue/lookupform';
 import SuccessMessage from './createissue/successmessage';
 import IssueDetails from './createissue/issuedetails';
+import { accessElf } from '../functions/accessElf';
 
 const CreateIssue = () => {
-  const navigate = useNavigate();
+  accessElf.track('CreateIssue');
   
   const [success, setSuccess] = useState(false);
   const [issueId, setIssueId] = useState('');
