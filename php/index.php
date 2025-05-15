@@ -107,6 +107,29 @@
     "message": "Issue updated successfully"
 }</code></pre>
         </div>
+        <div class="endpoint">
+            <h2>GET - Export Issues</h2>
+            <p><b>What it does:</b> Exports issues based on the provided criteria (id, date, or modified).</p>
+            <p><b>How to use:</b> Use one of the following URLs in your browser or API client:</p>
+            <ul>
+                <li>Export issues after a specific ID: <pre><code>GET /export.php?id=10</code></pre></li>
+                <li>Export issues created after a specific date: <pre><code>GET /export.php?date=2025-01-01</code></pre></li>
+                <li>Export issues modified after a specific date: <pre><code>GET /export.php?modified=2025-01-01</code></pre></li>
+            </ul>
+            <h4>Response Example:</h4>
+            <pre><code>[
+    {
+        "id": "11",
+        "unit": "Unit B",
+        "issue": "Another issue description",
+        "issue_number": "1002",
+        "created_at": "2025-01-02 10:00:00",
+        "modified_at": "2025-01-03 15:00:00",
+        "status": "open"
+    },
+    ...
+]</code></pre>
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
