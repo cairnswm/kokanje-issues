@@ -98,6 +98,7 @@
             <p><b>How to use:</b> Use a tool like Postman. Set the method to <b>PUT</b>, the URL to <code>/api.php/1</code> (replace <code>1</code> with the issue's ID), and the body to JSON like this:</p>
             <pre><code>{
     "unit": "Updated Unit",
+    "issue_number": "1001",
     "issue": "Updated description",
     "status": "resolved"
 }</code></pre>
