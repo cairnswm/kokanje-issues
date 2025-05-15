@@ -1,5 +1,8 @@
 <?php
 require_once 'dbconfig.php';
+// Get database connection
+$database = new Database();
+$conn = $database->getConnection();
 
 // Get parameters
 $id = isset($_GET['id']) ? intval($_GET['id']) : null;
